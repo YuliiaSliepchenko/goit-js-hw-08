@@ -1,43 +1,47 @@
-
 import trottle from 'lodash.throttle';
 
 const formEl = document.querySelector(".feedback-form");
-
 const STORAGE_KEY ="feedback-form-state";
-const message =document.querySelector('textarea[name ="message"]');
-const inputName = document.querySelector('input[name = "email"]');
 
-textMessage()
-let formData = {}
+formEl.addEventListener('submit',onSubmit);
+formEl.addEventListener('input', trottle(inputChange, 500));
 
-formEl.addEventListener("input", trottle(handleInputText, 500))
+function onPageReload() {
+    if (localStorage.getItem(STORAGE_KEY)) {
+        formEl.elements.email.value = JSON.parse(
+            localStorage.getItem(STORAGE_KEY)
+        ).email || "";
+        formEl.elements.message.value = JSON.parse(
+            localStorage.getItem(STORAGE_KEY)
+        ).message || "";
+    }
+}
+onPageReload()
 
-function handleInputText (ev) {
-    formData[ev.target.name] = ev.target.value
-    localStorage.setItem( STORAGE_KEY ,JSON.stringify(formData))
+const backValues =
+JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
+
+function inputChange(e) {
+
+    const backValues =
+    JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
+
+    backValues[e.target.name] = e.target.value;
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(backValues));
 }
 
-function textMessage (){
-    const saveMessage =JSON.parse(localStorage.getItem(STORAGE_KEY))
-    if (saveMessage) {
-        inputName.value =saveMessage.email
-        message.value =saveMessage.message
-    }
-    console.log("email:",inputName.value)
-    console.log("message:",message.value)
-}
-formEl.addEventListener("submit", handleSubmitForm)
+console.log(backValues);
 
-function handleSubmitForm(ev){
-    ev.preventDefault()
-    if (inputName.value === "" || message.value === ""){
-        return alert ("всі поля мають бути заповнені")}
-        localStorage.removeItem(STORAGE_KEY)
-        ev.currentTarget.reset()
-    }
-
-
+function onSubmit(e) {
+    e.preventDefault();
+    console.log('form submitted');
+    e.currentTarget.reset();
+    localStorage.removeItem(STORAGE_KEY);
+    console.log(backValues);
     
+}
+
+
 
 
     
