@@ -2,6 +2,9 @@ import trottle from 'lodash.throttle';
 
 const formEl = document.querySelector(".feedback-form");
 const STORAGE_KEY ="feedback-form-state";
+const inputEmail = document.querySelector('input[name="email"]')
+const messageText = document.querySelector('textarea[name="message"]')
+
 
 formEl.addEventListener('submit',onSubmit);
 formEl.addEventListener('input', trottle(inputChange, 500));
@@ -33,7 +36,10 @@ function inputChange(e) {
 console.log(backValues);
 
 function onSubmit(e) {
-    e.preventDefault();
+    e.preventDefault()
+    if (inputEmail.value === "" || messageText.value === ""){
+        return alert("Всі поля мають бути заповнені!!!")
+    }
     console.log('form submitted');
     e.currentTarget.reset();
     localStorage.removeItem(STORAGE_KEY);
